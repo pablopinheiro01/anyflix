@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import br.com.alura.anyflix.database.dao.MovieDao
 import br.com.alura.anyflix.database.entities.toMovie
 import br.com.alura.anyflix.model.Movie
+import br.com.alura.anyflix.network.services.MovieService
+import br.com.alura.anyflix.network.services.toMovie
 import br.com.alura.anyflix.ui.uistates.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -14,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val dao: MovieDao
+    private val dao: MovieDao,
+    private val service: MovieService
 ) : ViewModel() {
 
     private var currentUiStateJob: Job? = null
@@ -30,12 +33,16 @@ class HomeViewModel @Inject constructor(
     private fun loadUiState() {
         currentUiStateJob?.cancel()
         currentUiStateJob = viewModelScope.launch {
-            dao.findAll()
+//            dao.findAll()
+            flow {
+                val response = service.findAll()
+                val movies = response.map { it.toMovie() }
+                emit(movies)
+            }
                 .onStart {
                     _uiState.update { HomeUiState.Loading }
                 }
-                .map { entities ->
-                    val movies = entities.map { it.toMovie() }
+                .map { movies ->
                     if (movies.isEmpty()) {
                         emptyMap()
                     } else {
