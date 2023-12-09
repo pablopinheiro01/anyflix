@@ -33,6 +33,7 @@ interface MovieDao {
     fun suggestedMovies(id: String): Flow<List<Movie>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveAll(vararg entitie: MovieEntity)
+    suspend fun saveAll(vararg entities: MovieEntity)
+
 
 }
