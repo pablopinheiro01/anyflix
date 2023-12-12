@@ -6,6 +6,7 @@ import br.com.alura.anyflix.repositories.MovieRepository
 import br.com.alura.anyflix.ui.uistates.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,6 +34,7 @@ class HomeViewModel @Inject constructor(
                     _uiState.update { HomeUiState.Loading }
                 }.collectLatest { sections ->
                     if (sections.isEmpty()) {
+                        delay(3000)
                         _uiState.update {
                             HomeUiState.Empty
                         }
