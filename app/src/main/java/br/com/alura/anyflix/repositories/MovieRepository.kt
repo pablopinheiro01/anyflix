@@ -8,7 +8,6 @@ import br.com.alura.anyflix.network.services.MovieService
 import br.com.alura.anyflix.network.services.toMovieEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -54,5 +53,30 @@ class MovieRepository @Inject constructor(
         "Novidades" to movies.shuffled().take(7),
         "Continue assistindo" to movies.shuffled().take(7)
     )
+
+    suspend fun myList(): Flow<List<Movie>> {
+
+        CoroutineScope(coroutineContext).launch(Dispatchers.IO){
+            try{
+                //            delay(6000)
+                val response = service.myList()
+                val entities = response.map {
+                    it.toMovieEntity()
+                }
+                dao.saveAll(*entities.toTypedArray())
+            }catch(e: ConnectException){
+                Log.e("MovieRepository", "myList: falha ao conectar na api ", )
+            }
+
+        }
+
+        return dao.myList()
+            .map { entities -> entities.map { it.toMovie() } }
+
+    }
+
+    fun removeFromMyList(id: String) {
+        TODO("Not yet implemented")
+    }
 
 }
