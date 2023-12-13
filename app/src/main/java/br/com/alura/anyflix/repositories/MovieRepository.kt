@@ -84,7 +84,7 @@ class MovieRepository @Inject constructor(
                 val entity = response.toMovieEntity()
                 dao.save(entity)
             }catch(e: ConnectException){
-                Log.e("MovieRepository", "myList: falha ao conectar na api ", )
+                Log.e("MovieRepository", "findMovieById: falha ao conectar na api ", )
             }
 
         }
@@ -98,12 +98,26 @@ class MovieRepository @Inject constructor(
         return dao.suggestedMovies(id)
     }
 
-    fun addToMyList(id: String) {
-        TODO("Not yet implemented")
+    suspend fun addToMyList(id: String) {
+        CoroutineScope(coroutineContext).launch(Dispatchers.IO){
+            try{
+                service.addToMyList(id)
+                dao.addToMyList(id)
+            }catch(e: ConnectException){
+                Log.e("MovieRepository", "removeFromMyList: falha ao conectar na api ", )
+            }
+        }
     }
 
-    fun removeFromMyList(id: String) {
-        TODO("Not yet implemented")
+    suspend fun removeFromMyList(id: String) {
+        CoroutineScope(coroutineContext).launch(Dispatchers.IO){
+            try{
+                service.removeFromMyList(id)
+                dao.removeFromMyList(id)
+            }catch(e: ConnectException){
+                Log.e("MovieRepository", "removeFromMyList: falha ao conectar na api ", )
+            }
+        }
     }
 
 

@@ -2,7 +2,9 @@ package br.com.alura.anyflix.network.services
 
 import br.com.alura.anyflix.database.entities.MovieEntity
 import br.com.alura.anyflix.model.Movie
+import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 data class MovieResponse(
@@ -48,5 +50,10 @@ interface MovieService {
 
     @GET("movies/{id}")
     suspend fun findMoviewById(@Path("id") id: String): MovieResponse
+    @PUT("movies/removeFromMyList/{id}")
+    suspend fun removeFromMyList(@Path("id") id: String): Response<Void>//return retrofit reference with Void object
+
+    @PUT("movies/addToMyList/{id}")
+    suspend fun addToMyList(@Path("id") id: String)
 
 }
